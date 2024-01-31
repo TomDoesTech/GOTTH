@@ -1,0 +1,40 @@
+package templates
+
+import (
+	"crypto/rand"
+	"encoding/hex"
+)
+
+
+
+
+
+templ header(title string) {
+	<head>
+		<meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; style-src nonce-{ styleNonce } 'sha256-d7rFBVhb3n/Drrf+EpNWYdITkos3kQRFpB0oSOycXg4='; script-src 'nonce-{ scriptNonce }';"/>
+		<title>{ title }</title>
+		<script src="static/script/htmx.min.js" nonce={ctx.Value("htmxNonce").(string)}></script>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<link rel="stylesheet" href="static/css/style.css" nonce={  }/>
+	</head>
+}
+
+templ footer() {
+	<footer class="bg-blue-600 p-4">
+		<a class="text-gray-200" href="/">Home</a>
+		<a class="text-gray-200" href="/register">Register</a>
+		<a class="text-gray-200" href="/about">About</a>
+	</footer>
+}
+
+templ Layout(contents templ.Component, title string) {
+	@header(title)
+	<body>
+		<main>
+			@contents
+		</main>
+	</body>
+	@footer()
+}
