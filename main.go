@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"goth/templates"
+	"goth/internal/templates"
 	"html/template"
 	"net/http"
 	"os"
@@ -61,9 +61,13 @@ func cspMiddleware(next http.Handler) http.Handler {
 	ctx = context.WithValue(ctx, "twNonce", twNonce)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Security-Policy", "default-src 'self'"+" script-src 'nonce-"+htmxNonce+"'"+""+"style-src"+" 'nonce-"+twNonce+"'")
 
-		next.ServeHTTP(w, r)
+		htmxCSSHash := "sha256-pgn1TCGZX6O77zDvy0oTODMOxemn0oj0LeCnQTRj7Kg="
+
+		cspHeader := fmt.Sprintf("default-src 'self'; script-src 'nonce-%s'; style-src 'nonce-%s' '%s';", htmxNonce, twNonce, htmxCSSHash)
+		w.Header().Set("Content-Security-Policy", cspHeader)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 
 }
@@ -88,9 +92,19 @@ func main() {
 
 		r.Use(cspMiddleware)
 
+		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+			c := templates.NotFound()
+			err := templates.Layout(c, "My website").Render(r.Context(), w)
+
+			if err != nil {
+				http.Error(w, "Error rendering template", http.StatusInternalServerError)
+				return
+			}
+		})
+
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			c := templates.Index()
-			err := templates.Layout(c, "My website").Render(context.Background(), w)
+			err := templates.Layout(c, "My website").Render(r.Context(), w)
 
 			if err != nil {
 				http.Error(w, "Error rendering template", http.StatusInternalServerError)
@@ -100,8 +114,9 @@ func main() {
 
 		r.Get("/about", func(w http.ResponseWriter, r *http.Request) {
 
-			component := templates.About("About")
-			err := component.Render(context.Background(), w)
+			c := templates.About("About")
+			err := templates.Layout(c, "My website").Render(r.Context(), w)
+
 			if err != nil {
 				http.Error(w, "Error rendering template", http.StatusInternalServerError)
 				return
@@ -110,8 +125,9 @@ func main() {
 
 		r.Get("/register", func(w http.ResponseWriter, r *http.Request) {
 
-			component := templates.Register("Resgiter")
-			err := component.Render(context.Background(), w)
+			c := templates.Register("About")
+			err := templates.Layout(c, "My website").Render(r.Context(), w)
+
 			if err != nil {
 				http.Error(w, "Error rendering template", http.StatusInternalServerError)
 				return
@@ -129,8 +145,9 @@ func main() {
 		})
 
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
-			component := templates.Login("Login")
-			err := component.Render(context.Background(), w)
+			c := templates.Login("Login")
+			err := templates.Layout(c, "My website").Render(r.Context(), w)
+
 			if err != nil {
 				http.Error(w, "Error rendering template", http.StatusInternalServerError)
 				return
@@ -155,11 +172,6 @@ func main() {
 			fmt.Fprintf(w, "<h1>Unauthorized</h1><p>Go to <a href=\"/login\">login</a></p>")
 		})
 
-	})
-
-	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNotFound)
-		RenderTemplate(w, "404.html", nil, r)
 	})
 
 	err := http.ListenAndServe(":8080", r)
