@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"goth/internal/auth/tokenauth"
 	"goth/internal/handlers"
 	"goth/internal/store/dbstore"
-	"html/template"
 	"log/slog"
 	"net/http"
 	"os"
@@ -18,33 +18,15 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/jwtauth/v5"
 )
 
-func RenderTemplate(w http.ResponseWriter, tmplName string, data interface{}, r *http.Request) {
-
-	tmpl, err := template.ParseFiles(
-		"templates/"+tmplName,
-		"templates/partial/header.html",
-		"templates/partial/footer.html",
-		"templates/partial/base.html",
-	)
-
+func TokenFromCookie(r *http.Request) string {
+	cookie, err := r.Cookie("access_token")
 	if err != nil {
-		http.Error(w, "Error rendering template", http.StatusInternalServerError)
-		return
+		return ""
 	}
-
-	err = tmpl.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		fmt.Println("Error executing template:", err)
-		http.Error(w, "Error rendering template", http.StatusInternalServerError)
-		return
-	}
-}
-
-type User struct {
-	Email    string
-	Password string
+	return cookie.Value
 }
 
 func main() {
@@ -52,6 +34,9 @@ func main() {
 	r := chi.NewRouter()
 
 	userStore := dbstore.NewUserStore()
+	tokenAuth := tokenauth.NewTokenAuth(tokenauth.NewTokenAuthParams{
+		SecretKey: []byte("secret"),
+	})
 
 	fileServer := http.FileServer(http.Dir("./static"))
 	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
@@ -60,6 +45,7 @@ func main() {
 		r.Use(middleware.Logger,
 			m.TextHTMLMiddleware,
 			m.CSPMiddleware,
+			jwtauth.Verify(tokenAuth.JWTAuth, TokenFromCookie),
 		)
 
 		r.NotFound(handlers.NewNotFoundHandler().ServeHTTP)
@@ -76,8 +62,9 @@ func main() {
 
 		r.Get("/login", handlers.NewGetLoginHandler().ServeHTTP)
 
-		r.Post("/login", handlers.NewPostLoginHandler(handlers.PostLoginHanderParams{
+		r.Post("/login", handlers.NewPostLoginHandler(handlers.PostLoginHandlerParams{
 			UserStore: userStore,
+			TokenAuth: tokenAuth,
 		}).ServeHTTP)
 	})
 

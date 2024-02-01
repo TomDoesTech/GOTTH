@@ -1,5 +1,14 @@
 package templates
 
-templ Index() {
-	<div>Hello</div>
+templ Index(email string) {
+		<div>
+		Welcome {email}
+		</div>
+
+}
+
+templ GuestIndex() {
+	<div>
+	Welcome guest
+	</div>
 }

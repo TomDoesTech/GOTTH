@@ -1,22 +1,27 @@
 package handlers
 
 import (
+	"goth/internal/auth"
 	"goth/internal/store"
 	"goth/internal/templates"
 	"net/http"
+	"time"
 )
 
 type PostLoginHander struct {
 	userStore store.UserStore
+	tokenAuth auth.TokenAuth
 }
 
-type PostLoginHanderParams struct {
+type PostLoginHandlerParams struct {
 	UserStore store.UserStore
+	TokenAuth auth.TokenAuth
 }
 
-func NewPostLoginHandler(params PostLoginHanderParams) *PostLoginHander {
+func NewPostLoginHandler(params PostLoginHandlerParams) *PostLoginHander {
 	return &PostLoginHander{
 		userStore: params.UserStore,
+		tokenAuth: params.TokenAuth,
 	}
 }
 
@@ -35,6 +40,19 @@ func (h *PostLoginHander) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if user.Password == password {
+
+		token, err := h.tokenAuth.GenerateToken(*user)
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		expiration := time.Now().Add(365 * 24 * time.Hour)
+		cookie := http.Cookie{Name: "access_token", Value: token, Expires: expiration, Path: "/"}
+
+		http.SetCookie(w, &cookie)
+
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusOK)
 		return

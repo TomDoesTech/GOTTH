@@ -11,7 +11,13 @@ type UserStore struct {
 
 func NewUserStore() *UserStore {
 	return &UserStore{
-		Users: []store.User{},
+		Users: []store.User{
+			// set some default users
+			{
+				Email:    "1@example.com",
+				Password: "password",
+			},
+		},
 	}
 }
 
