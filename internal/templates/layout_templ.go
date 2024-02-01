@@ -112,7 +112,7 @@ func Layout(contents templ.Component, title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body class=\"flex flex-col h-full\"><main class=\"flex-1\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body class=\"flex flex-col h-full\"><nav><a class=\"text-gray-200\" href=\"/\">Home</a> <a class=\"text-gray-200\" href=\"/register\">Register</a> <a class=\"text-gray-200\" href=\"/login\">Login</a> <a class=\"text-gray-200\" href=\"/about\">About</a></nav><main class=\"flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -23,7 +23,7 @@ func Login(title string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"response-targets\"><h1>Sign in to your account</h1><form hx-post=\"/login\" hx-trigger=\"submit\" hx-target-40*=\"#login-error\"><div id=\"login-error\"></div><div><label for=\"email\">Your email</label> <input type=\"email\" name=\"email\" id=\"email\" placeholder=\"name@company.com\" required=\"\" autocomplete=\"email\"></div><div><label for=\"password\">Password</label> <input type=\"password\" name=\"password\" id=\"password\" placeholder=\"••••••••\" required=\"\" autocomplete=\"current-password\"></div><button type=\"submit\">Sign in</button><p>Don’t have an account yet? <a href=\"/register\">Register</a></p></form></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"response-targets\"><h1>Sign in to your account</h1><form hx-post=\"/login\" hx-trigger=\"submit\" hx-target-401=\"#login-error\"><div id=\"login-error\"></div><div><label for=\"email\">Your email</label> <input type=\"email\" name=\"email\" id=\"email\" placeholder=\"name@company.com\" required=\"\" autocomplete=\"email\"></div><div><label for=\"password\">Password</label> <input type=\"password\" name=\"password\" id=\"password\" placeholder=\"••••••••\" required=\"\" autocomplete=\"current-password\"></div><button type=\"submit\">Sign in</button><p>Don’t have an account yet? <a href=\"/register\">Register</a></p></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
