@@ -6,6 +6,7 @@ templ header(title string) {
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<script src="static/script/htmx.min.js" nonce={ ctx.Value("htmxNonce").(string) }></script>
+		<script src="static/script/response-targets.js" nonce={ ctx.Value("responseTargetsNonse").(string) }></script>
 		<link rel="stylesheet" href="static/css/style.css" nonce={ ctx.Value("twNonce").(string) }/>
 	</head>
 }
@@ -14,6 +15,7 @@ templ footer() {
 	<footer class="bg-blue-600 p-4">
 		<a class="text-gray-200" href="/">Home</a>
 		<a class="text-gray-200" href="/register">Register</a>
+		<a class="text-gray-200" href="/login">Login</a>
 		<a class="text-gray-200" href="/about">About</a>
 	</footer>
 }
