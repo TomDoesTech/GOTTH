@@ -23,6 +23,7 @@ templ footer() {
 templ Layout(contents templ.Component, title string) {
 	@header(title)
 	<body class="flex flex-col h-full">
+	<nav></nav>
 		<main class="flex-1">
 			@contents
 		</main>
