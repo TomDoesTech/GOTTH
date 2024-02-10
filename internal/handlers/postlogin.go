@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type PostLoginHander struct {
+type PostLoginHandler struct {
 	userStore store.UserStore
 	tokenAuth auth.TokenAuth
 }
@@ -18,14 +18,14 @@ type PostLoginHandlerParams struct {
 	TokenAuth auth.TokenAuth
 }
 
-func NewPostLoginHandler(params PostLoginHandlerParams) *PostLoginHander {
-	return &PostLoginHander{
+func NewPostLoginHandler(params PostLoginHandlerParams) *PostLoginHandler {
+	return &PostLoginHandler{
 		userStore: params.UserStore,
 		tokenAuth: params.TokenAuth,
 	}
 }
 
-func (h *PostLoginHander) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *PostLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	email := r.FormValue("email")
 	password := r.FormValue("password")

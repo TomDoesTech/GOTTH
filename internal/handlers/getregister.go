@@ -5,13 +5,13 @@ import (
 	"net/http"
 )
 
-type GetRegisterHander struct{}
+type GetRegisterHandler struct{}
 
-func NewGetRegisterHandler() *GetRegisterHander {
-	return &GetRegisterHander{}
+func NewGetRegisterHandler() *GetRegisterHandler {
+	return &GetRegisterHandler{}
 }
 
-func (h *GetRegisterHander) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *GetRegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c := templates.RegisterPage()
 	err := templates.Layout(c, "My website").Render(r.Context(), w)
 

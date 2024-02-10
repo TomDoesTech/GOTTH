@@ -5,13 +5,13 @@ import (
 	"net/http"
 )
 
-type GetLoginHander struct{}
+type GetLoginHandler struct{}
 
-func NewGetLoginHandler() *GetLoginHander {
-	return &GetLoginHander{}
+func NewGetLoginHandler() *GetLoginHandler {
+	return &GetLoginHandler{}
 }
 
-func (h *GetLoginHander) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *GetLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c := templates.Login("Login")
 	err := templates.Layout(c, "My website").Render(r.Context(), w)
 

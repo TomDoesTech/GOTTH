@@ -57,7 +57,7 @@ func main() {
 
 		r.Get("/register", handlers.NewGetRegisterHandler().ServeHTTP)
 
-		r.Post("/register", handlers.NewPostRegisterHandler(handlers.PostRegisterHanderParams{
+		r.Post("/register", handlers.NewPostRegisterHandler(handlers.PostRegisterHandlerParams{
 			UserStore: userStore,
 		}).ServeHTTP)
 

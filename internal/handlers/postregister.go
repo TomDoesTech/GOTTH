@@ -6,21 +6,21 @@ import (
 	"net/http"
 )
 
-type PostRegisterHander struct {
+type PostRegisterHandler struct {
 	userStore store.UserStore
 }
 
-type PostRegisterHanderParams struct {
+type PostRegisterHandlerParams struct {
 	UserStore store.UserStore
 }
 
-func NewPostRegisterHandler(params PostRegisterHanderParams) *PostRegisterHander {
-	return &PostRegisterHander{
+func NewPostRegisterHandler(params PostRegisterHandlerParams) *PostRegisterHandler {
+	return &PostRegisterHandler{
 		userStore: params.UserStore,
 	}
 }
 
-func (h *PostRegisterHander) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *PostRegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 

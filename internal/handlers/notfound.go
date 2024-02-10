@@ -7,8 +7,8 @@ import (
 
 type NotFoundHandler struct{}
 
-func NewNotFoundHandler() *GetRegisterHander {
-	return &GetRegisterHander{}
+func NewNotFoundHandler() *GetRegisterHandler {
+	return &GetRegisterHandler{}
 }
 
 func (h *NotFoundHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {

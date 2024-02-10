@@ -7,13 +7,13 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
-type HomeHander struct{}
+type HomeHandler struct{}
 
-func NewHomeHandler() *HomeHander {
-	return &HomeHander{}
+func NewHomeHandler() *HomeHandler {
+	return &HomeHandler{}
 }
 
-func (h *HomeHander) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	_, claims, _ := jwtauth.FromContext(r.Context())
 
