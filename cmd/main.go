@@ -42,7 +42,8 @@ func main() {
 	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
 
 	r.Group(func(r chi.Router) {
-		r.Use(middleware.Logger,
+		r.Use(
+			middleware.Logger,
 			m.TextHTMLMiddleware,
 			m.CSPMiddleware,
 			jwtauth.Verify(tokenAuth.JWTAuth, TokenFromCookie),

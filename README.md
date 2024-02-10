@@ -1,9 +1,20 @@
+# GoTTH
+A simple, modern stack for building fast web applications.
 
+<img src="banner.png" />
+
+* Go - Backend
+* Tailwind - CSS
+* Templ - Templating
+* HTMX - Interactivity
 
 ## Technologies
 ### Tailwind
+To get started with TailWind CSS, make sure you have the correct binary in the root directory.
 https://tailwindcss.com/blog/standalone-cli
 
+### Templ
+https://templ.guide/
 
 ## Makefile
 This Makefile is designed to simplify common development tasks for your project. It includes targets for building your Go application, watching and building Tailwind CSS, generating templates, and running your development server using Air.

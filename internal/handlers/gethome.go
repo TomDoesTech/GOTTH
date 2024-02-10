@@ -38,5 +38,4 @@ func (h *HomeHander) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
 		return
 	}
-
 }

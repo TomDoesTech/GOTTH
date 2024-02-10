@@ -6,12 +6,12 @@ import (
 )
 
 type UserStore struct {
-	Users []store.User
+	users []store.User
 }
 
 func NewUserStore() *UserStore {
 	return &UserStore{
-		Users: []store.User{
+		users: []store.User{
 			// set some default users
 			{
 				Email:    "1@example.com",
@@ -23,18 +23,18 @@ func NewUserStore() *UserStore {
 
 func (s *UserStore) CreateUser(email string, password string) error {
 
-	for _, user := range s.Users {
+	for _, user := range s.users {
 		if user.Email == email {
 			return errors.New("user already exists")
 		}
 	}
 
-	s.Users = append(s.Users, store.User{Email: email, Password: password})
+	s.users = append(s.users, store.User{Email: email, Password: password})
 	return nil
 }
 
 func (s *UserStore) GetUser(email string) (*store.User, error) {
-	for _, user := range s.Users {
+	for _, user := range s.users {
 		if user.Email == email {
 			return &user, nil
 		}

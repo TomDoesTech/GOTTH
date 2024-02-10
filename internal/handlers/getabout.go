@@ -5,14 +5,14 @@ import (
 	"net/http"
 )
 
-type AboutHander struct{}
+type AboutHandLer struct{}
 
-func NewAboutHandler() *AboutHander {
-	return &AboutHander{}
+func NewAboutHandler() *AboutHandLer {
+	return &AboutHandLer{}
 }
 
-func (h *AboutHander) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	c := templates.About("About")
+func (h *AboutHandLer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	c := templates.About()
 	err := templates.Layout(c, "My website").Render(r.Context(), w)
 
 	if err != nil {
