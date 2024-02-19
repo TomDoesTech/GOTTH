@@ -6,7 +6,7 @@ sql:
   gen:
     go: 
       package: "db"
-      out: "database/sql"
+      out: "internal/db"
       sql_package: "db"
       emit_json_tags: true
       emit_sql_as_comment: true
