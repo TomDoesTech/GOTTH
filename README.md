@@ -1,8 +1,6 @@
 # GoTTH
 A simple, modern stack for building fast web applications.
 
-<img src="banner.png" />
-
 * Go - Backend
 * Tailwind - CSS
 * Templ - Templating
