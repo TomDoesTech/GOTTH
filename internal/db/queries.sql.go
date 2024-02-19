@@ -86,7 +86,7 @@ func (q *Queries) GetTodos(ctx context.Context, userID int32) ([]Todo, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Todo
+	items := []Todo{}
 	for rows.Next() {
 		var i Todo
 		if err := rows.Scan(
@@ -137,7 +137,7 @@ func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	items := []User{}
 	for rows.Next() {
 		var i User
 		if err := rows.Scan(&i.ID, &i.Firstname, &i.Lastname); err != nil {

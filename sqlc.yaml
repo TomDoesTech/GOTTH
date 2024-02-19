@@ -8,5 +8,7 @@ sql:
       package: "db"
       out: "internal/db"
       sql_package: "db"
+      # Configuration https://docs.sqlc.dev/en/latest/reference/config.html#go
+      emit_empty_slices: true
       emit_json_tags: true
       emit_sql_as_comment: true
