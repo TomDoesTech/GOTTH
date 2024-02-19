@@ -1,9 +1,12 @@
+.PHONY: tailwind-watch
 tailwind-watch:
 	./tailwindcss -i ./static/css/input.css -o ./static/css/style.css --watch
 
+.PHONY: tailwind-build
 tailwind-build:
 	./tailwindcss -i ./static/css/input.css -o ./static/css/style.css --minify
 
+.PHONY: templ-generate
 templ-generate:
 	@if command -v templ > /dev/null; then \
 	    templ generate; \
@@ -18,6 +21,7 @@ templ-generate:
 	    fi; \
 	fi
 
+.PHONY: sqlc-generate
 sqlc-generate:
 	@if command -v sqlc > /dev/null; then \
 	    sqlc generate; \
@@ -32,6 +36,7 @@ sqlc-generate:
 	    fi; \
 	fi
 
+.PHONY: dev
 dev:
 	@if command -v air > /dev/null; then \
 	    go build -o ./tmp/$(APP_NAME) ./cmd/$(APP_NAME)/main.go && air; \
@@ -48,5 +53,6 @@ dev:
 	    fi; \
 	fi
 
+.PHONY: build
 build:
 	make tailwind-build && make templ-generate && make sqlc-generate && go build -o ./bin/$(APP_NAME) ./cmd/$(APP_NAME)/main.go
