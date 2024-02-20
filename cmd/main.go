@@ -22,6 +22,7 @@ import (
 	"database/sql"
 	postgres "goth/internal/db"
 
+	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
 )
 
@@ -33,11 +34,27 @@ func TokenFromCookie(r *http.Request) string {
 	return cookie.Value
 }
 
+func getDBConnectionString() string {
+	var (
+		db_database = os.Getenv("DB_DATABASE")
+		db_password = os.Getenv("DB_PASSWORD")
+		db_username = os.Getenv("DB_USERNAME")
+		db_port     = os.Getenv("DB_PORT")
+		db_host     = os.Getenv("DB_HOST")
+	)
+
+	if db_port == "" {
+		db_port = "5432"
+	}
+
+	return fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable", db_username, db_password, db_host, db_port, db_database)
+}
+
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	r := chi.NewRouter()
 
-	conn, err := sql.Open("postgres", "user=postgres password=password host=127.0.0.1 dbname=sqlc-example sslmode=disable")
+	conn, err := sql.Open("postgres", getDBConnectionString())
 	if err != nil {
 		logger.Error("Failed connection to Postgres DB", slog.Any("err", err))
 	}
