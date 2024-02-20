@@ -9,128 +9,64 @@ import (
 	"context"
 )
 
-const createTodo = `-- name: CreateTodo :one
-INSERT INTO todos (user_id, task, done)
-VALUES ($1, $2, $3) RETURNING id, user_id, task, done
-`
-
-type CreateTodoParams struct {
-	UserID int32  `json:"user_id"`
-	Task   string `json:"task"`
-	Done   bool   `json:"done"`
-}
-
-// CreateTodo
-//
-//	INSERT INTO todos (user_id, task, done)
-//	VALUES ($1, $2, $3) RETURNING id, user_id, task, done
-func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, error) {
-	row := q.db.QueryRowContext(ctx, createTodo, arg.UserID, arg.Task, arg.Done)
-	var i Todo
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
-		&i.Task,
-		&i.Done,
-	)
-	return i, err
-}
-
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (firstname, lastname)
-VALUES ($1, $2) RETURNING id, firstname, lastname
+INSERT INTO Users (email, "password")
+VALUES ($1, $2) RETURNING id, email, password
 `
 
 type CreateUserParams struct {
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 // CreateUser
 //
-//	INSERT INTO users (firstname, lastname)
-//	VALUES ($1, $2) RETURNING id, firstname, lastname
+//	INSERT INTO Users (email, "password")
+//	VALUES ($1, $2) RETURNING id, email, password
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Firstname, arg.Lastname)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Email, arg.Password)
 	var i User
-	err := row.Scan(&i.ID, &i.Firstname, &i.Lastname)
+	err := row.Scan(&i.ID, &i.Email, &i.Password)
 	return i, err
 }
 
 const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM users
+DELETE FROM Users
 WHERE id = $1
 `
 
 // DeleteUser
 //
-//	DELETE FROM users
+//	DELETE FROM Users
 //	WHERE id = $1
 func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
 	_, err := q.db.ExecContext(ctx, deleteUser, id)
 	return err
 }
 
-const getTodos = `-- name: GetTodos :many
-SELECT id, user_id, task, done FROM todos
-WHERE user_id = $1
-`
-
-// GetTodos
-//
-//	SELECT id, user_id, task, done FROM todos
-//	WHERE user_id = $1
-func (q *Queries) GetTodos(ctx context.Context, userID int32) ([]Todo, error) {
-	rows, err := q.db.QueryContext(ctx, getTodos, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []Todo{}
-	for rows.Next() {
-		var i Todo
-		if err := rows.Scan(
-			&i.ID,
-			&i.UserID,
-			&i.Task,
-			&i.Done,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const getUser = `-- name: GetUser :one
-SELECT id, firstname, lastname FROM users
+SELECT id, email, password FROM Users
 WHERE id = $1 LIMIT 1
 `
 
 // GetUser
 //
-//	SELECT id, firstname, lastname FROM users
+//	SELECT id, email, password FROM Users
 //	WHERE id = $1 LIMIT 1
 func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, id)
 	var i User
-	err := row.Scan(&i.ID, &i.Firstname, &i.Lastname)
+	err := row.Scan(&i.ID, &i.Email, &i.Password)
 	return i, err
 }
 
 const getUsers = `-- name: GetUsers :many
-SELECT id, firstname, lastname FROM users
+SELECT id, email, password FROM Users
 `
 
 // GetUsers
 //
-//	SELECT id, firstname, lastname FROM users
+//	SELECT id, email, password FROM Users
 func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 	rows, err := q.db.QueryContext(ctx, getUsers)
 	if err != nil {
@@ -140,7 +76,7 @@ func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 	items := []User{}
 	for rows.Next() {
 		var i User
-		if err := rows.Scan(&i.ID, &i.Firstname, &i.Lastname); err != nil {
+		if err := rows.Scan(&i.ID, &i.Email, &i.Password); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

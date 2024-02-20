@@ -6,15 +6,8 @@ package db
 
 import ()
 
-type Todo struct {
-	ID     int32  `json:"id"`
-	UserID int32  `json:"user_id"`
-	Task   string `json:"task"`
-	Done   bool   `json:"done"`
-}
-
 type User struct {
-	ID        int32  `json:"id"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
+	ID       int32  `json:"id"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
