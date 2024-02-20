@@ -48,6 +48,16 @@ cd GOTTH
 make dev
 ```
 
+### Environment Variables
+Using the [**Go** port of DotEnv](https://github.com/joho/godotenv). Example `.env` file for development:
+```bash
+DB_HOST="127.0.0.1"
+DB_PORT="5432"
+DB_DATABASE="sqlc-example"
+DB_USERNAME="postgres"
+DB_PASSWORD="password"
+```
+
 ## Makefile
 This Makefile is designed to simplify common development tasks for your project. It includes targets for building your Go application, watching and building Tailwind CSS, generating templates, and running your development server using Air.
 
