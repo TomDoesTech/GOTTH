@@ -1,6 +1,8 @@
 # GoTTH
 A simple, modern stack for building fast web applications.
 
+**Watch walk-through video:**
+
 [![GoTTH stack walkthrough](https://img.youtube.com/vi/k00jVJeZxrs/0.jpg)](https://www.youtube.com/watch?v=k00jVJeZxrs)
 
 * Go - Backend
