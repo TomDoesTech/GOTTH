@@ -1,22 +1,22 @@
 package handlers
 
 import (
-	"goth/internal/store"
+	"goth/internal/db"
 	"goth/internal/templates"
 	"net/http"
 )
 
 type PostRegisterHandler struct {
-	userStore store.UserStore
+	DB *db.Queries
 }
 
 type PostRegisterHandlerParams struct {
-	UserStore store.UserStore
+	DB *db.Queries
 }
 
 func NewPostRegisterHandler(params PostRegisterHandlerParams) *PostRegisterHandler {
 	return &PostRegisterHandler{
-		userStore: params.UserStore,
+		DB: params.DB,
 	}
 }
 
@@ -24,7 +24,10 @@ func (h *PostRegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	err := h.userStore.CreateUser(email, password)
+	_, err := h.DB.CreateUser(r.Context(), db.CreateUserParams{
+		Email:    email,
+		Password: password,
+	})
 
 	if err != nil {
 		http.Error(w, "Error creating user", http.StatusInternalServerError)
@@ -32,9 +35,9 @@ func (h *PostRegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 
 	c := templates.RegisterSucces()
-	err = c.Render(r.Context(), w)
+	errTemplate := c.Render(r.Context(), w)
 
-	if err != nil {
+	if errTemplate != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
 		return
 	}

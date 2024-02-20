@@ -46,15 +46,15 @@ func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
 
 const getUser = `-- name: GetUser :one
 SELECT id, email, password FROM Users
-WHERE id = $1 LIMIT 1
+WHERE email = $1 LIMIT 1
 `
 
 // GetUser
 //
 //	SELECT id, email, password FROM Users
-//	WHERE id = $1 LIMIT 1
-func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, id)
+//	WHERE email = $1 LIMIT 1
+func (q *Queries) GetUser(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, email)
 	var i User
 	err := row.Scan(&i.ID, &i.Email, &i.Password)
 	return i, err

@@ -7,7 +7,7 @@ SELECT * FROM Users;
 
 -- name: GetUser :one
 SELECT * FROM Users
-WHERE id = $1 LIMIT 1;
+WHERE email = $1 LIMIT 1;
 
 -- name: DeleteUser :exec
 DELETE FROM Users

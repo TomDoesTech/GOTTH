@@ -2,7 +2,7 @@ package tokenauth
 
 import (
 	"errors"
-	"goth/internal/store"
+	"goth/internal/db"
 	"time"
 
 	"github.com/go-chi/jwtauth/v5"
@@ -27,7 +27,7 @@ func NewTokenAuth(params NewTokenAuthParams) *TokenAuth {
 
 }
 
-func (a *TokenAuth) GenerateToken(user store.User) (string, error) {
+func (a *TokenAuth) GenerateToken(user db.User) (string, error) {
 
 	payload := map[string]interface{}{
 		"email": user.Email,

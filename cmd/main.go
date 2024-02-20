@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"goth/internal/auth/tokenauth"
 	"goth/internal/handlers"
-	"goth/internal/store/dbstore"
 	"log/slog"
 	"net/http"
 	"os"
@@ -19,6 +18,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
+
+	"database/sql"
+	postgres "goth/internal/db"
+
+	_ "github.com/lib/pq"
 )
 
 func TokenFromCookie(r *http.Request) string {
@@ -33,7 +37,13 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	r := chi.NewRouter()
 
-	userStore := dbstore.NewUserStore()
+	conn, err := sql.Open("postgres", "user=postgres password=password host=127.0.0.1 dbname=sqlc-example sslmode=disable")
+	if err != nil {
+		logger.Error("Failed connection to Postgres DB", slog.Any("err", err))
+	}
+
+	db := postgres.New(conn)
+
 	tokenAuth := tokenauth.NewTokenAuth(tokenauth.NewTokenAuthParams{
 		SecretKey: []byte("secret"),
 	})
@@ -58,13 +68,13 @@ func main() {
 		r.Get("/register", handlers.NewGetRegisterHandler().ServeHTTP)
 
 		r.Post("/register", handlers.NewPostRegisterHandler(handlers.PostRegisterHandlerParams{
-			UserStore: userStore,
+			DB: db,
 		}).ServeHTTP)
 
 		r.Get("/login", handlers.NewGetLoginHandler().ServeHTTP)
 
 		r.Post("/login", handlers.NewPostLoginHandler(handlers.PostLoginHandlerParams{
-			UserStore: userStore,
+			DB:        db,
 			TokenAuth: tokenAuth,
 		}).ServeHTTP)
 	})
