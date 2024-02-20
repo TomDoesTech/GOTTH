@@ -1,3 +1,8 @@
+.PHONY: check-os
+check-os:
+	@OS=$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m); \
+	echo $$OS
+
 .PHONY: tailwind-watch
 tailwind-watch:
 	./tailwindcss -i ./static/css/input.css -o ./static/css/style.css --watch
