@@ -28,7 +28,7 @@ templ-generate:
 					else \
 	        		echo "templ requires golang version 1.20 or greater. Exiting..."; \
 	        		exit 1; \
-					fi
+					fi; \
 	    else \
 	        echo "You chose not to install templ. Exiting..."; \
 	        exit 1; \
@@ -52,7 +52,7 @@ sqlc-generate:
 					else \
 							go get github.com/sqlc-dev/sqlc/cmd/sqlc; \
 							sqlc generate; \
-					fi \
+					fi; \
 			else \
 					echo "You chose not to install sqlc. Exiting..."; \
 					exit 1; \
