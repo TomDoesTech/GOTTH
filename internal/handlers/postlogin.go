@@ -2,25 +2,25 @@ package handlers
 
 import (
 	"goth/internal/auth"
-	"goth/internal/store"
+	"goth/internal/db"
 	"goth/internal/templates"
 	"net/http"
 	"time"
 )
 
 type PostLoginHandler struct {
-	userStore store.UserStore
+	DB        *db.Queries
 	tokenAuth auth.TokenAuth
 }
 
 type PostLoginHandlerParams struct {
-	UserStore store.UserStore
+	DB        *db.Queries
 	TokenAuth auth.TokenAuth
 }
 
 func NewPostLoginHandler(params PostLoginHandlerParams) *PostLoginHandler {
 	return &PostLoginHandler{
-		userStore: params.UserStore,
+		DB:        params.DB,
 		tokenAuth: params.TokenAuth,
 	}
 }
@@ -30,7 +30,7 @@ func (h *PostLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	user, err := h.userStore.GetUser(email)
+	user, err := h.DB.GetUser(r.Context(), email)
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -41,7 +41,7 @@ func (h *PostLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if user.Password == password {
 
-		token, err := h.tokenAuth.GenerateToken(*user)
+		token, err := h.tokenAuth.GenerateToken(user)
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
