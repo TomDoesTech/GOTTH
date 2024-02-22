@@ -1,4 +1,8 @@
+# Go Stuff
 bin
 tmp
+
+# node stuff
+node_modules
 
 .env
