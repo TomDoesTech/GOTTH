@@ -5,8 +5,12 @@
 Backend
 
 ### Tailwind
-To get started with TailWind CSS, make sure you have the correct binary in the root directory.
-https://tailwindcss.com/blog/standalone-cli
+We are using **NPM** to generate our `css` using tailwind.
+```bash
+npm install
+```
+~~To get started with TailWind CSS, make sure you have the correct binary in the root directory.
+https://tailwindcss.com/blog/standalone-cli~~
 
 ### Templ
 Templating

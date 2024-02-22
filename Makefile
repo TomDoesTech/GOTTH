@@ -1,15 +1,15 @@
 .PHONY: check-os
 check-os:
 	@OS=$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m); \
-	echo $$OS
+	echo $$OS; \
 
 .PHONY: tailwind-watch
 tailwind-watch:
-	./tailwindcss -i ./static/css/input.css -o ./static/css/style.css --watch
+	npm run tailwind-watch
 
 .PHONY: tailwind-build
 tailwind-build:
-	./tailwindcss -i ./static/css/input.css -o ./static/css/style.css --minify
+	npm run tailwind-build
 
 .PHONY: templ-generate
 templ-generate:
