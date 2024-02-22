@@ -1,0 +1,19 @@
+{
+  "name": "gotth",
+  "version": "1.0.0",
+  "description": "## Technologies ### Go Backend",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tailwind-watch": "tailwindcss -i ./static/css/input.css -o ./static/css/style.css --watch",
+    "tailwind-build": "tailwindcss -i ./static/css/input.css -o ./static/css/style.css --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "tailwindcss": "^3.4.1"
+  }
+}
