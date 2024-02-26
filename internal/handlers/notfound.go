@@ -7,13 +7,13 @@ import (
 
 type NotFoundHandler struct{}
 
-func NewNotFoundHandler() *GetRegisterHandler {
-	return &GetRegisterHandler{}
+func NewNotFoundHandler() *NotFoundHandler {
+	return &NotFoundHandler{}
 }
 
 func (h *NotFoundHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c := templates.NotFound()
-	err := templates.Layout(c, "My website").Render(r.Context(), w)
+	err := templates.Layout(c, "Not Found").Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
