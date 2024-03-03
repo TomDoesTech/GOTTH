@@ -38,6 +38,12 @@ make tailwind-build
 This target minifies the Tailwind CSS styles by running the tailwindcss command.
 
 ```
+make templ-watch
+```
+This target watches for changes to *.templ files and automatically generates them.
+
+
+```
 make templ-generate
 ```
 This target generates templates using the templ command.
