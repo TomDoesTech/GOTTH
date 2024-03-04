@@ -23,12 +23,12 @@ func CSPMiddleware(next http.Handler) http.Handler {
 	responseTargetsNonse := generateRandomString(16)
 	twNonce := generateRandomString(16)
 
-	// set then in context
-	ctx := context.WithValue(context.Background(), "htmxNonce", htmxNonce)
-	ctx = context.WithValue(ctx, "twNonce", twNonce)
-	ctx = context.WithValue(ctx, "responseTargetsNonse", responseTargetsNonse)
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// set then in context
+		ctx := context.WithValue(r.Context(), "htmxNonce", htmxNonce)
+		ctx = context.WithValue(ctx, "twNonce", twNonce)
+		ctx = context.WithValue(ctx, "responseTargetsNonse", responseTargetsNonse)
+
 		// the hash of the CSS that HTMX injects
 		htmxCSSHash := "sha256-pgn1TCGZX6O77zDvy0oTODMOxemn0oj0LeCnQTRj7Kg="
 
