@@ -25,3 +25,7 @@ build:
 .PHONY: vet
 vet:
 	go vet ./...
+
+.PHONY: staticcheck
+staticcheck:
+	staticcheck ./...

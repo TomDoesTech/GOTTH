@@ -1,9 +1,9 @@
-name: link
+name: main
 
 on: [push]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     
     steps:
@@ -17,3 +17,6 @@ jobs:
       
     - name: Run go vet
       run: make vet
+
+    - name: Run staticcheck
+      run: make staticcheck
