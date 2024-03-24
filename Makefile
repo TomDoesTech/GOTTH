@@ -21,3 +21,7 @@ dev:
 .PHONY: build
 build:
 	make tailwind-build && make templ-generate && go build -o ./bin/$(APP_NAME) ./cmd/$(APP_NAME)/main.go
+
+.PHONY: vet
+vet:
+	go vet ./...
