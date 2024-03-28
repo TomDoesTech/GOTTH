@@ -24,6 +24,7 @@ tmp_dir = "tmp"
   rerun_delay = 500
   send_interrupt = false
   stop_on_error = false
+  post_cmd = ["kill -15 $(lsof -ti:8080)"]
 
 [color]
   app = ""
