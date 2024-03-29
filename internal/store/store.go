@@ -1,8 +1,9 @@
 package store
 
 type User struct {
-	Email    string
-	Password string
+	ID       uint   `gorm:"primaryKey" json:"id"`
+	Email    string `json:"email"`
+	Password string `json:"-"`
 }
 
 type UserStore interface {

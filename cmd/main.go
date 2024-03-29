@@ -5,7 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"goth/internal/auth/tokenauth"
+	"goth/internal/config"
 	"goth/internal/handlers"
+	"goth/internal/hash/passwordhash"
+	database "goth/internal/store/db"
 	"goth/internal/store/dbstore"
 	"log/slog"
 	"net/http"
@@ -33,7 +36,16 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	r := chi.NewRouter()
 
-	userStore := dbstore.NewUserStore()
+	cfg := config.MustLoadConfig()
+
+	db := database.MustOpen(cfg.DatabaseName)
+
+	userStore := dbstore.NewUserStore(
+		dbstore.NewUserStoreParams{
+			DB:           db,
+			PasswordHash: passwordhash.NewHPasswordHash(),
+		},
+	)
 	tokenAuth := tokenauth.NewTokenAuth(tokenauth.NewTokenAuthParams{
 		SecretKey: []byte("secret"),
 	})
@@ -73,10 +85,8 @@ func main() {
 
 	signal.Notify(killSig, os.Interrupt, syscall.SIGTERM)
 
-	port := ":8080"
-
 	srv := &http.Server{
-		Addr:    port,
+		Addr:    cfg.Port,
 		Handler: r,
 	}
 
@@ -91,7 +101,7 @@ func main() {
 		}
 	}()
 
-	logger.Info("Server started", slog.String("port", port))
+	logger.Info("Server started", slog.String("port", cfg.Port))
 	<-killSig
 
 	logger.Info("Shutting down server")
