@@ -110,7 +110,22 @@ func nav() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"bg-blue-600 p-4\"><a class=\"text-gray-200\" href=\"/\">Home</a> <a class=\"text-gray-200\" href=\"/register\">Register</a> <a class=\"text-gray-200\" href=\"/login\">Login</a> <a class=\"text-gray-200\" href=\"/about\">About</a></nav>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"bg-blue-600 p-4 flex space-x-4\"><a class=\"text-gray-200\" href=\"/\">Home</a> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if middleware.GetUser(ctx) != nil {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"text-gray-200\" href=\"/logout\">Logout</a>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"text-gray-200\" href=\"/register\">Register</a> <a class=\"text-gray-200\" href=\"/login\">Login</a>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"text-gray-200\" href=\"/about\">About</a></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -105,7 +105,8 @@ func (h *PasswordHash) decodeHash(encodedHash string) (p *params, salt, hash []b
 		return nil, nil, nil, ErrIncompatibleVersion
 	}
 
-	_, err = fmt.Sscanf(vals[3], "m=%d,t=%d,p=%d", &h.memory, &h.iterations, &h.parallelism)
+	p = &params{}
+	_, err = fmt.Sscanf(vals[3], "m=%d,t=%d,p=%d", &p.memory, &p.iterations, &p.parallelism)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -114,9 +115,6 @@ func (h *PasswordHash) decodeHash(encodedHash string) (p *params, salt, hash []b
 	if err != nil {
 		return nil, nil, nil, err
 	}
-
-	p = &params{}
-
 	p.saltLength = uint32(len(salt))
 
 	hash, err = base64.RawStdEncoding.Strict().DecodeString(vals[5])
