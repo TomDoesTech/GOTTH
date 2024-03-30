@@ -11,25 +11,47 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestLogin(t *testing.T) {
 
+	user := &store.User{ID: 1, Email: "test@example.com", Password: "password"}
+
 	testCases := []struct {
-		name                string
-		email               string
-		password            string
-		expectedStatusCode  int
-		getUserResult       *store.User
-		createSessionResult *store.Session
+		name                         string
+		email                        string
+		password                     string
+		expectedStatusCode           int
+		getUserResult                *store.User
+		comparePasswordAndHashResult bool
+		getUserError                 error
+		createSessionResult          *store.Session
 	}{
 		{
-			name:                "success",
-			email:               "test@example.com",
-			password:            "password",
-			getUserResult:       &store.User{ID: 1, Email: "test@example.com", Password: "password"},
-			createSessionResult: &store.Session{UserID: 1, SessionID: "sessionId"},
-			expectedStatusCode:  http.StatusOK,
+			name:                         "success",
+			email:                        user.Email,
+			password:                     user.Password,
+			comparePasswordAndHashResult: true,
+			getUserResult:                user,
+			createSessionResult:          &store.Session{UserID: 1, SessionID: "sessionId"},
+			expectedStatusCode:           http.StatusOK,
+		},
+		{
+			name:               "fail - user not found",
+			email:              user.Email,
+			password:           user.Password,
+			getUserResult:      nil,
+			getUserError:       gorm.ErrRecordNotFound,
+			expectedStatusCode: http.StatusUnauthorized,
+		},
+		{
+			name:                         "fail - invalid password",
+			email:                        user.Email,
+			password:                     user.Password,
+			getUserResult:                user,
+			comparePasswordAndHashResult: false,
+			expectedStatusCode:           http.StatusUnauthorized,
 		},
 	}
 
@@ -40,11 +62,15 @@ func TestLogin(t *testing.T) {
 			sessionStore := &storemock.SessionStoreMock{}
 			passwordHash := &hashmock.PasswordHashMock{}
 
-			userStore.On("GetUser", tc.email).Return(tc.getUserResult, nil)
+			userStore.On("GetUser", tc.email).Return(tc.getUserResult, tc.getUserError)
 
-			passwordHash.On("ComparePasswordAndHash", tc.password, tc.getUserResult.Password).Return(true, nil)
+			if tc.getUserResult != nil {
+				passwordHash.On("ComparePasswordAndHash", tc.password, tc.getUserResult.Password).Return(tc.comparePasswordAndHashResult, nil)
+			}
 
-			sessionStore.On("CreateSession", &store.Session{UserID: tc.getUserResult.ID}).Return(tc.createSessionResult, nil)
+			if tc.getUserResult != nil && tc.comparePasswordAndHashResult {
+				sessionStore.On("CreateSession", &store.Session{UserID: tc.getUserResult.ID}).Return(tc.createSessionResult, nil)
+			}
 
 			handler := NewPostLoginHandler(PostLoginHandlerParams{
 				UserStore:         userStore,
@@ -61,6 +87,9 @@ func TestLogin(t *testing.T) {
 
 			assert.Equal(tc.expectedStatusCode, rr.Code)
 
+			userStore.AssertExpectations(t)
+			passwordHash.AssertExpectations(t)
+			sessionStore.AssertExpectations(t)
 		})
 	}
 }
