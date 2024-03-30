@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"goth/internal/middleware"
+	"goth/internal/store"
 	"goth/internal/templates"
 	"net/http"
-
-	"github.com/go-chi/jwtauth/v5"
 )
 
 type HomeHandler struct{}
@@ -15,9 +15,7 @@ func NewHomeHandler() *HomeHandler {
 
 func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	_, claims, _ := jwtauth.FromContext(r.Context())
-
-	email, ok := claims["email"].(string)
+	user, ok := r.Context().Value(middleware.UserKey).(*store.User)
 
 	if !ok {
 		c := templates.GuestIndex()
@@ -31,7 +29,7 @@ func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := templates.Index(email)
+	c := templates.Index(user.Email)
 	err := templates.Layout(c, "My website").Render(r.Context(), w)
 
 	if err != nil {

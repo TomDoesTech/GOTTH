@@ -18,10 +18,15 @@ templ footer() {
 }
 
 templ nav(){
-	<nav class="bg-blue-600 p-4">
+	<nav class="bg-blue-600 p-4 flex space-x-4">
 		<a class="text-gray-200" href="/">Home</a>
+
+	if middleware.GetUser(ctx) != nil {
+		<a class="text-gray-200" href="/logout">Logout</a>
+	} else {
 		<a class="text-gray-200" href="/register">Register</a>
 		<a class="text-gray-200" href="/login">Login</a>
+	}
 		<a class="text-gray-200" href="/about">About</a>
 	</nav>
 }

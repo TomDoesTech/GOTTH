@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
-	"goth/internal/auth/tokenauth"
+	"goth/internal/config"
 	"goth/internal/handlers"
+	"goth/internal/hash/passwordhash"
+	database "goth/internal/store/db"
 	"goth/internal/store/dbstore"
 	"log/slog"
 	"net/http"
@@ -18,7 +19,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/jwtauth/v5"
 )
 
 func TokenFromCookie(r *http.Request) string {
@@ -33,20 +33,35 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	r := chi.NewRouter()
 
-	userStore := dbstore.NewUserStore()
-	tokenAuth := tokenauth.NewTokenAuth(tokenauth.NewTokenAuthParams{
-		SecretKey: []byte("secret"),
-	})
+	cfg := config.MustLoadConfig()
+
+	db := database.MustOpen(cfg.DatabaseName)
+	passwordhash := passwordhash.NewHPasswordHash()
+
+	userStore := dbstore.NewUserStore(
+		dbstore.NewUserStoreParams{
+			DB:           db,
+			PasswordHash: passwordhash,
+		},
+	)
+
+	sessionStore := dbstore.NewSessionStore(
+		dbstore.NewSessionStoreParams{
+			DB: db,
+		},
+	)
 
 	fileServer := http.FileServer(http.Dir("./static"))
 	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
+
+	authMiddleware := m.NewAuthMiddleware(sessionStore, cfg.SessionCookieName)
 
 	r.Group(func(r chi.Router) {
 		r.Use(
 			middleware.Logger,
 			m.TextHTMLMiddleware,
 			m.CSPMiddleware,
-			jwtauth.Verify(tokenAuth.JWTAuth, TokenFromCookie),
+			authMiddleware.ValidateUser,
 		)
 
 		r.NotFound(handlers.NewNotFoundHandler().ServeHTTP)
@@ -64,8 +79,10 @@ func main() {
 		r.Get("/login", handlers.NewGetLoginHandler().ServeHTTP)
 
 		r.Post("/login", handlers.NewPostLoginHandler(handlers.PostLoginHandlerParams{
-			UserStore: userStore,
-			TokenAuth: tokenAuth,
+			UserStore:         userStore,
+			SessionStore:      sessionStore,
+			PasswordHash:      passwordhash,
+			SessionCookieName: cfg.SessionCookieName,
 		}).ServeHTTP)
 	})
 
@@ -73,10 +90,8 @@ func main() {
 
 	signal.Notify(killSig, os.Interrupt, syscall.SIGTERM)
 
-	port := ":8080"
-
 	srv := &http.Server{
-		Addr:    port,
+		Addr:    cfg.Port,
 		Handler: r,
 	}
 
@@ -84,14 +99,14 @@ func main() {
 		err := srv.ListenAndServe()
 
 		if errors.Is(err, http.ErrServerClosed) {
-			fmt.Printf("server closed\n")
+			logger.Info("Server shutdown complete")
 		} else if err != nil {
-			fmt.Printf("error starting server: %s\n", err)
+			logger.Error("Server error", slog.Any("err", err))
 			os.Exit(1)
 		}
 	}()
 
-	logger.Info("Server started", slog.String("port", port))
+	logger.Info("Server started", slog.String("port", cfg.Port))
 	<-killSig
 
 	logger.Info("Shutting down server")
