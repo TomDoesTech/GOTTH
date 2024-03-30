@@ -91,18 +91,18 @@ func TestLogin(t *testing.T) {
 
 			handler.ServeHTTP(rr, req)
 
-			assert.Equal(tc.expectedStatusCode, rr.Code)
+			assert.Equal(tc.expectedStatusCode, rr.Code, "handler returned wrong status code: got %v want %v", rr.Code, tc.expectedStatusCode)
 
 			cookies := rr.Result().Cookies()
 			if tc.expectedCookie != nil {
 
 				sessionCookie := cookies[0]
 
-				assert.Equal(tc.expectedCookie.Name, sessionCookie.Name)
-				assert.Equal(tc.expectedCookie.Value, sessionCookie.Value)
-				assert.Equal(tc.expectedCookie.HttpOnly, sessionCookie.HttpOnly)
+				assert.Equal(tc.expectedCookie.Name, sessionCookie.Name, "handler returned wrong cookie name: got %v want %v", sessionCookie.Name, tc.expectedCookie.Name)
+				assert.Equal(tc.expectedCookie.Value, sessionCookie.Value, "handler returned wrong cookie value: got %v want %v", sessionCookie.Value, tc.expectedCookie.Value)
+				assert.Equal(tc.expectedCookie.HttpOnly, sessionCookie.HttpOnly, "handler returned wrong cookie HttpOnly: got %v want %v", sessionCookie.HttpOnly, tc.expectedCookie.HttpOnly)
 			} else {
-				assert.Empty(cookies)
+				assert.Empty(cookies, "handler returned unexpected cookie: got %v want %v", cookies, tc.expectedCookie)
 			}
 
 			userStore.AssertExpectations(t)

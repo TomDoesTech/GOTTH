@@ -27,15 +27,18 @@ func (h *PostRegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	err := h.userStore.CreateUser(email, password)
 
 	if err != nil {
-		http.Error(w, "Error creating user", http.StatusInternalServerError)
+
+		w.WriteHeader(http.StatusBadRequest)
+		c := templates.RegisterError()
+		c.Render(r.Context(), w)
 		return
 	}
 
-	c := templates.RegisterSucces()
+	c := templates.RegisterSuccess()
 	err = c.Render(r.Context(), w)
 
 	if err != nil {
-		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+		http.Error(w, "error rendering template", http.StatusInternalServerError)
 		return
 	}
 

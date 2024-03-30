@@ -30,7 +30,15 @@ templ RegisterPage() {
 	</div>
 }
 
-templ RegisterSucces() {
+templ RegisterSuccess() {
 	<h1>Registration successful</h1>
 	<p>Go to <a href="login">login</a></p>
+}
+
+
+templ RegisterError() {
+	<div>
+		<h1>Registration failed</h1>
+		<p>There was an error registering your account</p>
+	</div>
 }
