@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"goth/internal/hash"
 	"goth/internal/store"
 	"goth/internal/templates"
@@ -46,13 +45,7 @@ func (h *PostLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("user.Password", user.Password)
-
 	passwordIsValid, err := h.passwordhash.ComparePasswordAndHash(password, user.Password)
-
-	fmt.Println("passwordIsValid", passwordIsValid)
-
-	fmt.Println("err", err)
 
 	if err != nil || !passwordIsValid {
 		w.WriteHeader(http.StatusUnauthorized)
