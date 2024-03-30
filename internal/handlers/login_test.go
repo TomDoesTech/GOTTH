@@ -27,6 +27,7 @@ func TestLogin(t *testing.T) {
 		comparePasswordAndHashResult bool
 		getUserError                 error
 		createSessionResult          *store.Session
+		expectedCookie               *http.Cookie
 	}{
 		{
 			name:                         "success",
@@ -36,6 +37,11 @@ func TestLogin(t *testing.T) {
 			getUserResult:                user,
 			createSessionResult:          &store.Session{UserID: 1, SessionID: "sessionId"},
 			expectedStatusCode:           http.StatusOK,
+			expectedCookie: &http.Cookie{
+				Name:     "session",
+				Value:    "sessionId",
+				HttpOnly: true,
+			},
 		},
 		{
 			name:               "fail - user not found",
@@ -86,6 +92,18 @@ func TestLogin(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			assert.Equal(tc.expectedStatusCode, rr.Code)
+
+			cookies := rr.Result().Cookies()
+			if tc.expectedCookie != nil {
+
+				sessionCookie := cookies[0]
+
+				assert.Equal(tc.expectedCookie.Name, sessionCookie.Name)
+				assert.Equal(tc.expectedCookie.Value, sessionCookie.Value)
+				assert.Equal(tc.expectedCookie.HttpOnly, sessionCookie.HttpOnly)
+			} else {
+				assert.Empty(cookies)
+			}
 
 			userStore.AssertExpectations(t)
 			passwordHash.AssertExpectations(t)
