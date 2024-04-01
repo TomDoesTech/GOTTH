@@ -22,7 +22,6 @@ type Nonces struct {
 }
 
 func generateRandomString(length int) string {
-
 	bytes := make([]byte, length)
 	_, err := rand.Read(bytes)
 	if err != nil {
@@ -115,7 +114,7 @@ type UserContextKey string
 
 var UserKey UserContextKey = "user"
 
-func (m *AuthMiddleware) ValidateUser(next http.Handler) http.Handler {
+func (m *AuthMiddleware) AddUserToContext(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		sessionCookie, err := r.Cookie(m.sessionCookieName)

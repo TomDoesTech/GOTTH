@@ -61,7 +61,7 @@ func main() {
 			middleware.Logger,
 			m.TextHTMLMiddleware,
 			m.CSPMiddleware,
-			authMiddleware.ValidateUser,
+			authMiddleware.AddUserToContext,
 		)
 
 		r.NotFound(handlers.NewNotFoundHandler().ServeHTTP)
