@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	b64 "encoding/base64"
+	"fmt"
 	"goth/internal/hash"
 	"goth/internal/store"
 	"goth/internal/templates"
@@ -63,10 +65,15 @@ func (h *PostLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userID := user.ID
+	sessionID := session.SessionID
+
+	cookieValue := b64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%d", sessionID, userID)))
+
 	expiration := time.Now().Add(365 * 24 * time.Hour)
 	cookie := http.Cookie{
 		Name:     h.sessionCookieName,
-		Value:    session.SessionID,
+		Value:    cookieValue,
 		Expires:  expiration,
 		Path:     "/",
 		HttpOnly: true,

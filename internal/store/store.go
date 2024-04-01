@@ -20,5 +20,5 @@ type UserStore interface {
 
 type SessionStore interface {
 	CreateSession(session *Session) (*Session, error)
-	GetUserFromSession(sessionID string) (*User, error)
+	GetUserFromSession(sessionID string, userID string) (*User, error)
 }

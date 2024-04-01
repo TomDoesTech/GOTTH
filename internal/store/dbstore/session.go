@@ -34,12 +34,12 @@ func (s *SessionStore) CreateSession(session *store.Session) (*store.Session, er
 	return session, nil
 }
 
-func (s *SessionStore) GetUserFromSession(sessionID string) (*store.User, error) {
+func (s *SessionStore) GetUserFromSession(sessionID string, userID string) (*store.User, error) {
 	var session store.Session
 
 	err := s.db.Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Select("ID", "Email")
-	}).Where("session_id = ?", sessionID).First(&session).Error
+	}).Where("session_id = ? AND user_id = ?", sessionID, userID).First(&session).Error
 
 	if err != nil {
 		return nil, err

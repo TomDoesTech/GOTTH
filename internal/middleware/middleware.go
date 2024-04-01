@@ -3,11 +3,13 @@ package middleware
 import (
 	"context"
 	"crypto/rand"
+	b64 "encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"goth/internal/store"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type key string
@@ -125,7 +127,27 @@ func (m *AuthMiddleware) AddUserToContext(next http.Handler) http.Handler {
 			return
 		}
 
-		user, err := m.sessionStore.GetUserFromSession(sessionCookie.Value)
+		decodedValue, err := b64.StdEncoding.DecodeString(sessionCookie.Value)
+
+		if err != nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		splitValue := strings.Split(string(decodedValue), ":")
+
+		if len(splitValue) != 2 {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		sessionID := splitValue[0]
+		userID := splitValue[1]
+
+		fmt.Println("sessionID", sessionID)
+		fmt.Println("userID", userID)
+
+		user, err := m.sessionStore.GetUserFromSession(sessionID, userID)
 
 		if err != nil {
 			next.ServeHTTP(w, r)
