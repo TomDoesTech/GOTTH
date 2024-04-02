@@ -21,6 +21,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
+var Environment = "development"
+
 func TokenFromCookie(r *http.Request) string {
 	cookie, err := r.Cookie("access_token")
 	if err != nil {
@@ -29,9 +31,15 @@ func TokenFromCookie(r *http.Request) string {
 	return cookie.Value
 }
 
+func init() {
+	os.Setenv("env", Environment)
+}
+
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	r := chi.NewRouter()
+
+	logger.Info("Starting server", slog.String("environment", Environment))
 
 	cfg := config.MustLoadConfig()
 
@@ -82,6 +90,10 @@ func main() {
 			UserStore:         userStore,
 			SessionStore:      sessionStore,
 			PasswordHash:      passwordhash,
+			SessionCookieName: cfg.SessionCookieName,
+		}).ServeHTTP)
+
+		r.Post("/logout", handlers.NewPostLogoutHandler(handlers.PostLogoutHandlerParams{
 			SessionCookieName: cfg.SessionCookieName,
 		}).ServeHTTP)
 	})
