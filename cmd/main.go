@@ -21,15 +21,11 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
+/*
+* Set to production at build time
+* used to determine what assets to load
+ */
 var Environment = "development"
-
-func TokenFromCookie(r *http.Request) string {
-	cookie, err := r.Cookie("access_token")
-	if err != nil {
-		return ""
-	}
-	return cookie.Value
-}
 
 func init() {
 	os.Setenv("env", Environment)
@@ -38,8 +34,6 @@ func init() {
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	r := chi.NewRouter()
-
-	logger.Info("Starting server", slog.String("environment", Environment))
 
 	cfg := config.MustLoadConfig()
 
@@ -118,7 +112,7 @@ func main() {
 		}
 	}()
 
-	logger.Info("Server started", slog.String("port", cfg.Port))
+	logger.Info("Server started", slog.String("port", cfg.Port), slog.String("env", Environment))
 	<-killSig
 
 	logger.Info("Shutting down server")
