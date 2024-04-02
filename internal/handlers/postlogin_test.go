@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/base64"
 
 	hashmock "goth/internal/hash/mock"
 	"goth/internal/store"
@@ -39,7 +40,7 @@ func TestLogin(t *testing.T) {
 			expectedStatusCode:           http.StatusOK,
 			expectedCookie: &http.Cookie{
 				Name:     "session",
-				Value:    "sessionId",
+				Value:    base64.StdEncoding.EncodeToString([]byte("sessionId:1")),
 				HttpOnly: true,
 			},
 		},
