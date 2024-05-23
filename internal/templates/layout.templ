@@ -29,7 +29,7 @@ templ nav() {
 		<div class="container flex justify-between">
 			<ol class="flex space-x-4">
 				<li>
-					<a class="text-gray-200" href="/">Home</a>
+					<a class="text-gray-200" hx-target="body" href="/">Home</a>
 				</li>
 				<li>
 					<a class="text-gray-200" href="/about">About</a>
@@ -38,7 +38,7 @@ templ nav() {
 			<ol class="flex space-x-4">
 				if middleware.GetUser(ctx) != nil {
 					<li>
-						<button class="text-gray-200" hx-post="/logout">Logout</button>
+						<button class="text-gray-200" hx-target="body" hx-swap="innerHTML" hx-post="/logout">Logout</button>
 					</li>
 				} else {
 					<li>
@@ -57,7 +57,7 @@ templ Layout(contents templ.Component, title string) {
 	@header(title)
 	<body class="flex flex-col h-full">
 		@nav()
-		<main class="flex-1 container ">
+		<main id="main" class="flex-1 container ">
 			@contents
 		</main>
 		@footer()
