@@ -29,7 +29,7 @@ templ nav() {
 		<div class="container flex justify-between">
 			<ol class="flex space-x-4">
 				<li>
-					<a class="text-gray-200" hx-target="body" href="/">Home</a>
+					<a class="text-gray-200" href="/">Home</a>
 				</li>
 				<li>
 					<a class="text-gray-200" href="/about">About</a>
@@ -57,7 +57,7 @@ templ Layout(contents templ.Component, title string) {
 	@header(title)
 	<body class="flex flex-col h-full">
 		@nav()
-		<main id="main" class="flex-1 container ">
+		<main class="flex-1 container ">
 			@contents
 		</main>
 		@footer()
