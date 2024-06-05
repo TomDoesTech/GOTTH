@@ -38,7 +38,7 @@ templ nav() {
 			<ol class="flex space-x-4">
 				if middleware.GetUser(ctx) != nil {
 					<li>
-						<button class="text-gray-200" hx-post="/logout">Logout</button>
+						<button class="text-gray-200" hx-target="body" hx-swap="innerHTML" hx-post="/logout">Logout</button>
 					</li>
 				} else {
 					<li>
