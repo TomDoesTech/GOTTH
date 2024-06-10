@@ -1,0 +1,15 @@
+version: "3.8"
+networks:
+  default:
+    name: ${NETWORK:-app}
+    external: true
+
+services:
+  app:
+    image: ${IMAGE_ID:-app}
+    command: make start
+    volumes:
+      - ../:/app
+    working_dir: /app
+    environment:
+      - LOG_LEVEL=debug
