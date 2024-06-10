@@ -32,12 +32,11 @@ func init() {
 }
 
 func main() {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	r := chi.NewRouter()
-
 	cfg := config.MustLoadConfig()
-
+	logger := slog.New(slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{Level: cfg.LogLevel}))
 	db := database.MustOpen(cfg.DatabaseName)
+
 	passwordhash := passwordhash.NewHPasswordHash()
 
 	userStore := dbstore.NewUserStore(

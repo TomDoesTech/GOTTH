@@ -1,11 +1,16 @@
 package config
 
-import "github.com/kelseyhightower/envconfig"
+import (
+	"log/slog"
+
+	"github.com/kelseyhightower/envconfig"
+)
 
 type Config struct {
-	Port              string `envconfig:"PORT" default:":4000"`
-	DatabaseName      string `envconfig:"DATABASE_NAME" default:"goth.db"`
-	SessionCookieName string `envconfig:"SESSION_COOKIE_NAME" default:"session"`
+	Port              string     `envconfig:"PORT" default:":4000"`
+	DatabaseName      string     `envconfig:"DATABASE_NAME" default:"goth.db"`
+	SessionCookieName string     `envconfig:"SESSION_COOKIE_NAME" default:"session"`
+	LogLevel          slog.Level `envconfig:"LOG_LEVEL" default:"info"`
 }
 
 func loadConfig() (*Config, error) {
