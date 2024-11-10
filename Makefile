@@ -4,6 +4,14 @@ APP_NAME ?= app
 vet:
 	go vet ./...
 
+.PHONY: staticcheck
+staticcheck:
+	staticcheck ./...
+
+.PHONY: test
+test:
+	go test -race -v -timeout 30s ./...
+
 .PHONY: tailwind-watch
 tailwind-watch:
 	tailwindcss -i ./static/css/input.css -o ./static/css/style.css --watch
