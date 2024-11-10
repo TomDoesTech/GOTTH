@@ -1,0 +1,12 @@
+# ./dev/docker-compose.yml (Base configuration)
+version: '3.8'
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: dev/Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - ENVIRONMENT=production
+

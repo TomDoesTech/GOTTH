@@ -11,6 +11,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"syscall"
 	"time"
@@ -29,6 +30,8 @@ var Environment = "development"
 
 func init() {
 	os.Setenv("env", Environment)
+	// run generate script
+	exec.Command("make", "tailwind-build").Run()
 }
 
 func main() {
