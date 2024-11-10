@@ -43,5 +43,7 @@ jobs:
       - uses: WillAbides/setup-go-faster@v1.14.0
         with:
           go-version: ${{ matrix.go }}
+      - run: "make templ-generate"
+      
       - run: "make test"
   
