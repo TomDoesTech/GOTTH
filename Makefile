@@ -1,5 +1,9 @@
 APP_NAME ?= app
 
+.PHONY: vet
+vet:
+	go vet ./...
+
 .PHONY: tailwind-watch
 tailwind-watch:
 	tailwindcss -i ./static/css/input.css -o ./static/css/style.css --watch
