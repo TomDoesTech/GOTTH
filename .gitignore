@@ -2,4 +2,3 @@ bin
 tmp
 *.db
 tailwindcss
-internal/templates/*.txt
