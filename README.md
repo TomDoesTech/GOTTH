@@ -26,7 +26,12 @@ https://github.com/cosmtrek/air
 ## Makefile
 This Makefile is designed to simplify common development tasks for your project. It includes targets for building your Go application, watching and building Tailwind CSS, generating templates, and running your development server using Air.
 
+
+## Development
+`make docker-dev` will start everything in watch mode inside a Docker container.
+
 ### Targets:
+
 ```bash
 make tailwind-watch
 ```

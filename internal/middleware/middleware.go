@@ -122,7 +122,6 @@ func (m *AuthMiddleware) AddUserToContext(next http.Handler) http.Handler {
 		sessionCookie, err := r.Cookie(m.sessionCookieName)
 
 		if err != nil {
-			fmt.Println("error getting session cookie", err)
 			next.ServeHTTP(w, r)
 			return
 		}
