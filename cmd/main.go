@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"goth/internal/config"
-	"goth/internal/handlers"
 	"goth/internal/hash/passwordhash"
+	"goth/internal/router"
 	database "goth/internal/store/db"
 	"goth/internal/store/dbstore"
 	"log/slog"
@@ -15,11 +15,6 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	m "goth/internal/middleware"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 )
 
 /*
@@ -36,7 +31,6 @@ func init() {
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	r := chi.NewRouter()
 
 	cfg := config.MustLoadConfig()
 
@@ -56,44 +50,14 @@ func main() {
 		},
 	)
 
-	fileServer := http.FileServer(http.Dir("./static"))
-	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
-
-	authMiddleware := m.NewAuthMiddleware(sessionStore, cfg.SessionCookieName)
-
-	r.Group(func(r chi.Router) {
-		r.Use(
-			middleware.Logger,
-			m.TextHTMLMiddleware,
-			m.CSPMiddleware,
-			authMiddleware.AddUserToContext,
-		)
-
-		r.NotFound(handlers.NewNotFoundHandler().ServeHTTP)
-
-		r.Get("/", handlers.NewHomeHandler().ServeHTTP)
-
-		r.Get("/about", handlers.NewAboutHandler().ServeHTTP)
-
-		r.Get("/register", handlers.NewGetRegisterHandler().ServeHTTP)
-
-		r.Post("/register", handlers.NewPostRegisterHandler(handlers.PostRegisterHandlerParams{
-			UserStore: userStore,
-		}).ServeHTTP)
-
-		r.Get("/login", handlers.NewGetLoginHandler().ServeHTTP)
-
-		r.Post("/login", handlers.NewPostLoginHandler(handlers.PostLoginHandlerParams{
-			UserStore:         userStore,
-			SessionStore:      sessionStore,
-			PasswordHash:      passwordhash,
-			SessionCookieName: cfg.SessionCookieName,
-		}).ServeHTTP)
-
-		r.Post("/logout", handlers.NewPostLogoutHandler(handlers.PostLogoutHandlerParams{
-			SessionCookieName: cfg.SessionCookieName,
-		}).ServeHTTP)
-	})
+	// router dependencies
+	deps := router.RouterDependencies{
+		Config:         *cfg,
+		UserStore:      userStore,
+		SessionStore:   sessionStore,
+		PasswordHasher: passwordhash,
+	}
+	r := router.SetupRouter(deps)
 
 	killSig := make(chan os.Signal, 1)
 
