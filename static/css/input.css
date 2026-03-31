@@ -1,3 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-primary-600: var(--color-blue-600);
+  --color-secondary-200: var(--color-yellow-200);
+  --color-neutral-200: var(--color-gray-200);
+
+  --breakpoint-mobile: 640px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem; /* DEFAULT */
+
+  @media (min-width: 640px) { padding-inline: 2rem; }
+  @media (min-width: 768px) { padding-inline: 4rem; }
+  @media (min-width: 1024px) { padding-inline: 5rem; }
+}
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
